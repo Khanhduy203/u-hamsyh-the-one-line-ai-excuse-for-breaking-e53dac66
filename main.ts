@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ENTRY_LINE =
@@ -24,6 +24,10 @@ const outDir =
   envDir !== undefined && envDir.trim() !== ""
     ? envDir
     : join(process.cwd(), "output");
+
+if (existsSync(outDir) && !statSync(outDir).isDirectory()) {
+  fail(`MAKEFUN_OUTPUT_DIR points at a file, not a directory: ${outDir}`);
+}
 
 mkdirSync(outDir, { recursive: true });
 writeFileSync(join(outDir, "entry.txt"), ENTRY_LINE, "utf8");
